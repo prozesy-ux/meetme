@@ -39,15 +39,15 @@ module.exports = {
     "universe_domain": "googleapis.com"
   },
   "createdAt": "2025-03-17T09:22:56.775Z",
-  "updatedAt": "2025-04-04T09:46:28.333Z",
+  "updatedAt": "2025-04-08T04:06:55.109Z",
   "adminCommissionRate": 1,
   "agoraAppCertificate": "AGORA APP CERTIFICATE",
   "agoraAppId": "AGORA APP ID",
-  "audioPrivateCallRate": 1,
+  "audioPrivateCallRate": 10,
   "chatInteractionRate": 1,
   "femaleRandomCallRate": 0,
-  "generalRandomCallRate": 1,
+  "generalRandomCallRate": 10,
   "isAppEnabled": false,
-  "maleRandomCallRate": 1,
-  "videoPrivateCallRate": 1
+  "maleRandomCallRate": 10,
+  "videoPrivateCallRate": 20
 };
