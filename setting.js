@@ -39,7 +39,7 @@ module.exports = {
     "universe_domain": "googleapis.com"
   },
   "createdAt": "2025-03-17T09:22:56.775Z",
-  "updatedAt": "2025-04-08T04:06:55.109Z",
+  "updatedAt": "2025-04-10T07:05:06.322Z",
   "adminCommissionRate": 1,
   "agoraAppCertificate": "AGORA APP CERTIFICATE",
   "agoraAppId": "AGORA APP ID",
