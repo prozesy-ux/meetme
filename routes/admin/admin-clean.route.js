@@ -90,11 +90,7 @@ route.post("/validateAdminLogin", async (req, res) => {
 // ADMIN PASSWORD RESET ENDPOINT (for setup/troubleshooting)
 route.post("/resetAdminPassword", async (req, res) => {
   try {
-    const { email, newPassword, secretKey } = req.body;
-    
-    if (secretKey !== (process.env.secretKey || "mysecretkey123")) {
-      return res.status(400).json({ status: false, message: "Invalid secret key" });
-    }
+    const { email, newPassword } = req.body;
 
     if (!email || !newPassword) {
       return res.status(400).json({ status: false, message: "Email and newPassword required" });
