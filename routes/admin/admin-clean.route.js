@@ -1,11 +1,10 @@
 const express = require("express");
 const route = express.Router();
-const checkAccessWithSecretKey = require("../../checkAccess");
 
 console.log("✅ admin-clean.route.js loaded");
 
-// LOGIN ENDPOINT - FULL IMPLEMENTATION
-route.post("/validateAdminLogin", checkAccessWithSecretKey(), async (req, res) => {
+// LOGIN ENDPOINT - FULL IMPLEMENTATION (NO MIDDLEWARE TEMPORARILY)
+route.post("/validateAdminLogin", async (req, res) => {
   try {
     const { email, password } = req.body;
     
