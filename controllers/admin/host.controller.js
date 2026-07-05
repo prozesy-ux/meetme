@@ -453,20 +453,12 @@ exports.createHost = async (req, res) => {
   try {
     const { name, bio, dob, gender, countryFlagImage, country, language, impression, email } = req.body;
 
-    if (
-      !name ||
-      !bio ||
-      !dob ||
-      !gender ||
-      !countryFlagImage ||
-      !country ||
-      !impression ||
-      !language
-    ) {
+    // For fake hosts, minimal validation - just need basic info
+    if (!name || !email) {
       if (req.files) deleteFiles(req.files);
       return res.status(200).json({
         status: false,
-        message: "Missing required host details (name, bio, dob, gender, country, language, impression, countryFlagImage).",
+        message: "Name and email are required.",
       });
     }
 
