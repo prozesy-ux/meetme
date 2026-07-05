@@ -17,20 +17,22 @@ app.use(express.urlencoded({ extended: true }));
 // Initialize Firebase Admin
 try {
   if (!firebaseAdmin.apps.length) {
-    const firebaseConfig = {
-      type: process.env.FIREBASE_TYPE || "service_account",
-      project_id: process.env.FIREBASE_PROJECT_ID,
-      private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-      private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      client_email: process.env.FIREBASE_CLIENT_EMAIL,
-      client_id: process.env.FIREBASE_CLIENT_ID,
-      auth_uri: "https://accounts.google.com/o/oauth2/auth",
-      token_uri: "https://oauth2.googleapis.com/token",
-      auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-    };
-    firebaseAdmin.initializeApp({
-      credential: firebaseAdmin.credential.cert(firebaseConfig),
-    });
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY
+      ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+      : undefined;
+
+    if (privateKey && process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL) {
+      firebaseAdmin.initializeApp({
+        credential: firebaseAdmin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          privateKey,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        }),
+      });
+      console.log("✅ Firebase initialized");
+    } else {
+      console.warn("⚠️ Firebase credentials missing - skipping initialization");
+    }
   }
 } catch (error) {
   console.error("Firebase initialization error:", error.message);
@@ -72,6 +74,17 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Initialize global settingJSON before loading routes
+global.settingJSON = {
+  tkpayEnabled: process.env.TKPAY_ENABLED === "true" || false,
+  tkpayMerchantId: process.env.TKPAY_MERCHANT_ID || "",
+  tkpayHashKey: process.env.TKPAY_HASH_KEY || "",
+  tkpayApiUrl: process.env.TKPAY_API_URL || "https://tkm.worldxxpp.com",
+  tkpayCallbackBaseUrl: process.env.TKPAY_CALLBACK_URL || "",
+  tkpayIsTest: process.env.TKPAY_IS_TEST !== "false",
+  secretKey: process.env.secretKey || "",
+};
+
 // Load routes
 try {
   const allRoutes = require("./routes/route");
@@ -79,6 +92,7 @@ try {
   console.log("✅ Routes loaded successfully");
 } catch (error) {
   console.error("Error loading routes:", error.message);
+  console.error(error.stack);
 }
 
 // 404 handler
