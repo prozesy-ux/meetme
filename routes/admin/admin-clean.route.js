@@ -37,23 +37,34 @@ route.post("/validateAdminLogin", async (req, res) => {
 
     console.log("✅ Admin found:", { email, uid: admin.uid, storedPasswordLength: admin.password?.length });
 
+    // Try decrypting password, fallback to plain text comparison
+    let passwordMatches = false;
     try {
       console.log("🔵 Attempting to decrypt password...");
       const decryptedPassword = cryptr.decrypt(admin.password);
       console.log("✅ Password decrypted successfully");
-      
-      if (decryptedPassword !== password) {
-        console.log("❌ Wrong password for:", email, { provided: password.substring(0, 3) + "***", stored: decryptedPassword.substring(0, 3) + "***" });
-        return res.status(401).json({
-          status: false,
-          message: "Invalid email or password"
-        });
-      }
+      passwordMatches = (decryptedPassword === password);
     } catch (err) {
-      console.error("❌ Password verification failed:", err.message, { errorType: err.constructor.name });
-      return res.status(500).json({
+      console.log("⚠️ Decryption failed, trying plain text comparison:", err.message);
+      // If decryption fails, try plain text comparison (for manually entered passwords)
+      passwordMatches = (admin.password === password);
+      if (passwordMatches) {
+        console.log("✅ Plain text password matched, encrypting for future use...");
+        // Encrypt the password for next time
+        try {
+          const encryptedPassword = cryptr.encrypt(password);
+          await Admin.updateOne({ email }, { password: encryptedPassword });
+        } catch (encryptErr) {
+          console.error("⚠️ Could not encrypt password:", encryptErr.message);
+        }
+      }
+    }
+
+    if (!passwordMatches) {
+      console.log("❌ Password mismatch for:", email);
+      return res.status(401).json({
         status: false,
-        message: "Password verification failed: " + err.message
+        message: "Invalid email or password"
       });
     }
 
@@ -68,7 +79,7 @@ route.post("/validateAdminLogin", async (req, res) => {
       data: { _id: admin._id, uid: admin.uid, email: admin.email, name: admin.name, purchaseCode: admin.purchaseCode }
     });
   } catch (error) {
-    console.error("❌ Login error:", error.message, { stack: error.stack });
+    console.error("❌ Login error:", error.message);
     return res.status(500).json({
       status: false,
       message: error.message || "Internal Server Error"
