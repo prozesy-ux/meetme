@@ -1,0 +1,1 @@
+const m=require("./node_modules/mongoose");m.connect(process.env.MONGO_URL).then(async()=>{const r=await m.connection.db.collection("logins").updateOne({},{["$set"]:{login:true}},{upsert:true});console.log("Updated:",r.modifiedCount+r.upsertedCount);process.exit(0)}).catch(e=>{console.error(e.message);process.exit(1)})
