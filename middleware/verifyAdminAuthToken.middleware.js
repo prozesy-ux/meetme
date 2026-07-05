@@ -24,30 +24,41 @@ const validateAdminFirebaseToken = async (req, res, next) => {
   const token = authHeader.split("Bearer ")[1];
 
   try {
-    const [decodedToken, mainAdmin] = await Promise.all([admin.auth().verifyIdToken(token), Admin.findOne({ uid: adminUid }).select("_id email password uid")]);
-
-    console.log("🔍 [DEBUG] Decoded Token Email:", decodedToken?.email);
-    console.log("🔍 [DEBUG] Admin UID from Header:", adminUid);
-    console.log("🔍 [DEBUG] Admin Record Found:", mainAdmin ? "YES" : "NO");
-    if (mainAdmin) {
-      console.log("🔍 [DEBUG] Admin UID in DB:", mainAdmin.uid);
-      console.log("🔍 [DEBUG] Admin Email in DB:", mainAdmin.email);
-    }
+    const decodedToken = await admin.auth().verifyIdToken(token);
 
     if (!decodedToken || !decodedToken.email) {
       console.warn("⚠️ [AUTH] Invalid token. Email not found.");
       return res.status(401).json({ status: false, message: "Invalid token. Authorization failed." });
     }
 
-    //console.log("✅ Decoded Token:", decodedToken);
+    console.log("🔍 [DEBUG] Decoded Token Email:", decodedToken?.email);
+    console.log("🔍 [DEBUG] Decoded Token UID:", decodedToken?.uid);
+    console.log("🔍 [DEBUG] Admin UID from Header:", adminUid);
 
+    // First, try to find admin by the provided UID
+    let mainAdmin = await Admin.findOne({ uid: adminUid }).select("_id email password uid");
+
+    // If not found by UID, try to find by email (which is more reliable)
     if (!mainAdmin) {
-      console.warn("⚠️ [AUTH] Admin not found with UID:", adminUid);
-      // Try to find admin by email
-      const adminByEmail = await Admin.findOne({ email: decodedToken.email }).select("_id email uid");
-      if (adminByEmail) {
-        console.log("🔍 [DEBUG] Admin found by email! UID in DB:", adminByEmail.uid, "vs UID from header:", adminUid);
+      console.log("ℹ️ [AUTH] Admin not found by UID, attempting by email...");
+      mainAdmin = await Admin.findOne({ email: decodedToken.email }).select("_id email password uid");
+      
+      if (mainAdmin && mainAdmin.uid !== decodedToken.uid) {
+        // UID mismatch - update it to the current Firebase UID
+        console.log("🔄 [AUTH] Syncing Firebase UID - Updating admin record");
+        console.log("  Old UID:", mainAdmin.uid, "→ New UID:", decodedToken.uid);
+        mainAdmin = await Admin.findByIdAndUpdate(
+          mainAdmin._id,
+          { uid: decodedToken.uid },
+          { new: true }
+        ).select("_id email password uid");
       }
+    }
+
+    if (mainAdmin) {
+      console.log("🔍 [DEBUG] Admin found. Email:", mainAdmin.email, "UID:", mainAdmin.uid);
+    } else {
+      console.warn("⚠️ [AUTH] Admin not found with UID or email:", adminUid, decodedToken.email);
       return res.status(401).json({ status: false, message: "Admin not found. Authorization failed." });
     }
 
