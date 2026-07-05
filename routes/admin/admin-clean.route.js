@@ -1,10 +1,11 @@
 const express = require("express");
 const route = express.Router();
 
-// Load dependencies at module level (not in handler)
+// Load dependencies at module level
 const Admin = require("../../models/admin.model");
 const Login = require("../../models/login.model");
-const cryptr = require("../../util/cryptr");
+const Cryptr = require("cryptr");
+const cryptr = new Cryptr(process.env.CRYPTR_KEY || "default-secret-key");
 
 console.log("✅ admin-clean.route.js loaded with dependencies");
 
