@@ -2,36 +2,35 @@ const mongoose = require("mongoose");
 
 module.exports = async function loadSettings() {
   try {
-    // Try to load from database if it exists
-    const settingSchema = mongoose.connection.collection("settings");
-    const settings = await settingSchema.findOne({});
+    const Setting = require("../models/setting.model");
+    let settings = await Setting.findOne({});
 
     if (settings) {
       global.settingJSON = settings;
       console.log("✅ Settings loaded from database");
     } else {
-      // Initialize with defaults
-      global.settingJSON = {
+      // Create a default Settings document in the database so registerAdmin can find it
+      settings = new Setting({
         tkpayEnabled: process.env.TKPAY_ENABLED === "true" || false,
-        tkpayMerchantId: process.env.TKPAY_MERCHANT_ID,
-        tkpayHashKey: process.env.TKPAY_HASH_KEY,
+        tkpayMerchantId: process.env.TKPAY_MERCHANT_ID || "",
+        tkpayHashKey: process.env.TKPAY_HASH_KEY || "",
         tkpayApiUrl: process.env.TKPAY_API_URL || "https://tkm.worldxxpp.com",
-        tkpayCallbackBaseUrl:
-          process.env.TKPAY_CALLBACK_URL || "https://betnzy.com",
+        tkpayCallbackBaseUrl: process.env.TKPAY_CALLBACK_URL || "https://betnzy.com",
         tkpayIsTest: process.env.TKPAY_IS_TEST === "true" || true,
-      };
-      console.log("⚠️ Using environment settings (database empty)");
+        privateKey: {},
+      });
+      await settings.save();
+      global.settingJSON = settings;
+      console.log("✅ Default Settings document created in database");
     }
   } catch (error) {
     console.error("Error loading settings:", error.message);
-    // Fallback to env vars
     global.settingJSON = {
       tkpayEnabled: process.env.TKPAY_ENABLED === "true" || false,
-      tkpayMerchantId: process.env.TKPAY_MERCHANT_ID,
-      tkpayHashKey: process.env.TKPAY_HASH_KEY,
+      tkpayMerchantId: process.env.TKPAY_MERCHANT_ID || "",
+      tkpayHashKey: process.env.TKPAY_HASH_KEY || "",
       tkpayApiUrl: process.env.TKPAY_API_URL || "https://tkm.worldxxpp.com",
-      tkpayCallbackBaseUrl:
-        process.env.TKPAY_CALLBACK_URL || "https://betnzy.com",
+      tkpayCallbackBaseUrl: process.env.TKPAY_CALLBACK_URL || "https://betnzy.com",
       tkpayIsTest: process.env.TKPAY_IS_TEST === "true" || true,
     };
   }
