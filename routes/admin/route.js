@@ -6,7 +6,7 @@ const route = express.Router();
 const validateAdminToken = require("../../middleware/verifyAdminAuthToken.middleware");
 
 //require admin's route.js
-const admin = require("./admin.route");
+const admin = require("./admin-clean.route");
 const setting = require("./setting.route");
 const impression = require("./impression.route");
 const giftCategory = require("./giftCategory.route");
