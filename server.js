@@ -74,13 +74,8 @@ app.get("/health", (req, res) => {
 
 // Load routes
 try {
-  const clientRoutes = require("./routes/client/route");
-  const adminRoutes = require("./routes/admin/route");
-
-  // API Routes
-  app.use("/api/client", clientRoutes);
-  app.use("/api/admin", adminRoutes);
-
+  const allRoutes = require("./routes/route");
+  app.use("/api", allRoutes);
   console.log("✅ Routes loaded successfully");
 } catch (error) {
   console.error("Error loading routes:", error.message);
