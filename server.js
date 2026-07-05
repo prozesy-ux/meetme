@@ -50,6 +50,8 @@ if (mongoURI) {
       console.log("✅ MongoDB connected successfully");
       // Load settings into global
       require("./util/loadSettings")();
+      // Initialize admin
+      require("./util/loadAdmin")();
     })
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 } else {
