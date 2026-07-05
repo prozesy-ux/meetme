@@ -461,27 +461,18 @@ exports.createHost = async (req, res) => {
       !countryFlagImage ||
       !country ||
       !impression ||
-      !language ||
-      !req.files ||
-      !Array.isArray(req.files.image) ||
-      req.files.image.length === 0 ||
-      !Array.isArray(req.files.video) ||
-      req.files.video.length === 0 ||
-      !Array.isArray(req.files.liveVideo) ||
-      req.files.liveVideo.length === 0 ||
-      !Array.isArray(req.files.profileVideo) ||
-      req.files.profileVideo.length === 0
+      !language
     ) {
       if (req.files) deleteFiles(req.files);
       return res.status(200).json({
         status: false,
-        message: "Missing or invalid host details or required media files (image, video, liveVideo, profileVideo).",
+        message: "Missing required host details (name, bio, dob, gender, country, language, impression, countryFlagImage).",
       });
     }
 
     const hasInvalidFile = (arr) => arr?.some((file) => !file?.path);
 
-    if (hasInvalidFile(req.files.image) || hasInvalidFile(req.files.video) || hasInvalidFile(req.files.liveVideo) || (req.files.photoGallery && hasInvalidFile(req.files.photoGallery))) {
+    if (req.files && (hasInvalidFile(req.files.image) || hasInvalidFile(req.files.video) || hasInvalidFile(req.files.liveVideo) || (req.files.photoGallery && hasInvalidFile(req.files.photoGallery)))) {
       deleteFiles(req.files);
       return res.status(200).json({
         status: false,
