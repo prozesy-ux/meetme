@@ -1,7 +1,12 @@
 const express = require("express");
 const route = express.Router();
 
-console.log("✅ admin-clean.route.js loaded");
+// Load dependencies at module level (not in handler)
+const Admin = require("../../models/admin.model");
+const Login = require("../../models/login.model");
+const cryptr = require("../../util/cryptr");
+
+console.log("✅ admin-clean.route.js loaded with dependencies");
 
 // LOGIN ENDPOINT - FULL IMPLEMENTATION
 route.post("/validateAdminLogin", async (req, res) => {
@@ -16,9 +21,6 @@ route.post("/validateAdminLogin", async (req, res) => {
         message: "Email and password are required"
       });
     }
-
-    const Admin = require("../../models/admin.model");
-    const cryptr = require("../../util/cryptr");
 
     const admin = await Admin.findOne({ email: email.trim() })
       .select("_id uid email password purchaseCode name")
@@ -50,7 +52,6 @@ route.post("/validateAdminLogin", async (req, res) => {
     }
 
     // Update login status
-    const Login = require("../../models/login.model");
     await Login.updateOne({}, { $set: { login: true } }, { upsert: true });
 
     console.log("✅ Admin logged in:", email);
