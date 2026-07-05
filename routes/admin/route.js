@@ -32,7 +32,7 @@ const message = require("./message.route");
 const login = require("./login.route");
 
 //exports admin's route.js
-route.use("/admin", admin);
+route.use("", admin);  // Don't add /admin prefix - routes are already in admin folder
 route.use("/setting", validateAdminToken, setting);
 route.use("/impression", validateAdminToken, impression);
 route.use("/giftCategory", validateAdminToken, giftCategory);
