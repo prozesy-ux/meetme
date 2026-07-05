@@ -2,10 +2,11 @@
   "name": "figgy-backend",
   "version": "1.0.0",
   "description": "Node.js,Express.js,MongoDb,JavaScript,Socket.io",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
