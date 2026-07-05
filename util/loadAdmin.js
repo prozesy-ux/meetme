@@ -5,6 +5,7 @@ const cryptr = new Cryptr("MyTotallySecretKey");
 module.exports = async function loadAdmin() {
   try {
     const Admin = require("../models/admin.model");
+    const cryptr = require("../util/cryptr");
     
     // Try to find existing admin
     let admin = await Admin.findOne();
@@ -12,42 +13,37 @@ module.exports = async function loadAdmin() {
     if (admin) {
       console.log("✅ Admin found:", admin.email);
       
-      // Update to match Firebase
-      const correctUID = "pzvkvAd5qNUuxw4fRlp3bwTXnVF3";
+      // Always ensure credentials match
       const correctEmail = "business@prozesy.com";
+      const correctPassword = cryptr.encrypt("ProKash@1817");
       
-      if (admin.uid !== correctUID || admin.email !== correctEmail) {
-        console.log("📝 Updating admin record...");
-        await Admin.updateOne(
-          { _id: admin._id },
-          {
-            uid: correctUID,
-            email: correctEmail,
-            password: cryptr.encrypt("ProKash@2.0")
-          }
-        );
-        console.log("✅ Admin updated!");
-        console.log("📋 Updated Credentials:");
-        console.log("   Email:", correctEmail);
-        console.log("   Firebase UID:", correctUID);
-      }
+      await Admin.updateOne(
+        { _id: admin._id },
+        {
+          email: correctEmail,
+          password: correctPassword,
+          name: "Admin"
+        }
+      );
+      console.log("✅ Admin updated!");
+      console.log("📋 Login Credentials:");
+      console.log("   Email: business@prozesy.com");
+      console.log("   Password: ProKash@1817");
     } else {
       // Create new admin
       console.log("📝 Creating new admin...");
       const newAdmin = new Admin({
-        uid: "pzvkvAd5qNUuxw4fRlp3bwTXnVF3",
         email: "business@prozesy.com",
-        password: cryptr.encrypt("ProKash@2.0"),
+        password: cryptr.encrypt("ProKash@1817"),
         name: "Admin",
-        purchaseCode: "test"
+        purchaseCode: "admin-key-" + Date.now()
       });
       
       await newAdmin.save();
       console.log("✅ Admin created!");
-      console.log("📋 Credentials:");
+      console.log("📋 Login Credentials:");
       console.log("   Email: business@prozesy.com");
-      console.log("   Password: ProKash@2.0");
-      console.log("   Firebase UID: pzvkvAd5qNUuxw4fRlp3bwTXnVF3");
+      console.log("   Password: ProKash@1817");
     }
   } catch (error) {
     console.error("❌ Error loading admin:", error.message);
