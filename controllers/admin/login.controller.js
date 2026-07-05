@@ -1,17 +1,5 @@
 const Login = require("../../models/login.model");
 
-// TEMP: delete admin collection for re-signup
-exports.resetAdmin = async (req, res) => {
-  try {
-    const Admin = require("../../models/admin.model");
-    await Admin.deleteMany({});
-    await Login.updateOne({}, { $set: { login: false } }, { upsert: true });
-    return res.status(200).json({ status: true, message: "Admin reset. Ready for fresh signup." });
-  } catch (error) {
-    return res.status(500).json({ status: false, error: error.message });
-  }
-};
-
 //get login or not
 exports.get = async (req, res) => {
   try {
