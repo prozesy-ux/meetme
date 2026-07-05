@@ -7,7 +7,6 @@ const validateAdminToken = require("../../middleware/verifyAdminAuthToken.middle
 
 //require admin's route.js
 const admin = require("./admin-clean.route");
-const testRoute = require("./test.route");
 const setting = require("./setting.route");
 const impression = require("./impression.route");
 const giftCategory = require("./giftCategory.route");
@@ -33,8 +32,7 @@ const message = require("./message.route");
 const login = require("./login.route");
 
 //exports admin's route.js
-route.use(admin);  // Mount without prefix
-route.use(testRoute);  // Test endpoint
+route.use(admin);  // Mount admin routes
 route.use("/setting", validateAdminToken, setting);
 route.use("/impression", validateAdminToken, impression);
 route.use("/giftCategory", validateAdminToken, giftCategory);
