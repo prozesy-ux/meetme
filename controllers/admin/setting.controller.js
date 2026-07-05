@@ -166,6 +166,14 @@ exports.updateSettingToggle = async (req, res) => {
       setting.razorpayIosEnabled = !setting.razorpayIosEnabled;
     } else if (type === "flutterwaveIosEnabled") {
       setting.flutterwaveIosEnabled = !setting.flutterwaveIosEnabled;
+    } else if (type === "tkpayEnabled") {
+      setting.tkpayEnabled = !setting.tkpayEnabled;
+    } else if (type === "tkpayIsTest") {
+      setting.tkpayIsTest = !setting.tkpayIsTest;
+    } else if (type === "tkpayAndroidEnabled") {
+      setting.tkpayAndroidEnabled = !setting.tkpayAndroidEnabled;
+    } else if (type === "tkpayIosEnabled") {
+      setting.tkpayIosEnabled = !setting.tkpayIosEnabled;
     } else {
       return res.status(200).json({ status: false, message: "type passed must be valid." });
     }
