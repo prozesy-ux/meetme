@@ -13,26 +13,30 @@ module.exports = async function loadAdmin() {
     if (admin) {
       console.log("✅ Admin found:", admin.email);
       
-      // Always ensure credentials match
+      // Always ensure credentials match Firebase
+      const correctUID = "rYdvhXHfOJPKrfPJm4UwsjDT6573";
       const correctEmail = "business@prozesy.com";
       const correctPassword = cryptr.encrypt("ProKash@1817");
       
       await Admin.updateOne(
         { _id: admin._id },
         {
+          uid: correctUID,
           email: correctEmail,
           password: correctPassword,
           name: "Admin"
         }
       );
-      console.log("✅ Admin updated!");
-      console.log("📋 Login Credentials:");
+      console.log("✅ Admin updated to match Firebase!");
+      console.log("📋 Firebase Credentials:");
       console.log("   Email: business@prozesy.com");
       console.log("   Password: ProKash@1817");
+      console.log("   Firebase UID: rYdvhXHfOJPKrfPJm4UwsjDT6573");
     } else {
       // Create new admin
       console.log("📝 Creating new admin...");
       const newAdmin = new Admin({
+        uid: "rYdvhXHfOJPKrfPJm4UwsjDT6573",
         email: "business@prozesy.com",
         password: cryptr.encrypt("ProKash@1817"),
         name: "Admin",
@@ -41,9 +45,10 @@ module.exports = async function loadAdmin() {
       
       await newAdmin.save();
       console.log("✅ Admin created!");
-      console.log("📋 Login Credentials:");
+      console.log("📋 Firebase Credentials:");
       console.log("   Email: business@prozesy.com");
       console.log("   Password: ProKash@1817");
+      console.log("   Firebase UID: rYdvhXHfOJPKrfPJm4UwsjDT6573");
     }
   } catch (error) {
     console.error("❌ Error loading admin:", error.message);
