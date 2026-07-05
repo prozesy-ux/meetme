@@ -35,20 +35,25 @@ route.post("/validateAdminLogin", async (req, res) => {
       });
     }
 
+    console.log("✅ Admin found:", { email, uid: admin.uid, storedPasswordLength: admin.password?.length });
+
     try {
+      console.log("🔵 Attempting to decrypt password...");
       const decryptedPassword = cryptr.decrypt(admin.password);
+      console.log("✅ Password decrypted successfully");
+      
       if (decryptedPassword !== password) {
-        console.log("❌ Wrong password for:", email);
+        console.log("❌ Wrong password for:", email, { provided: password.substring(0, 3) + "***", stored: decryptedPassword.substring(0, 3) + "***" });
         return res.status(401).json({
           status: false,
           message: "Invalid email or password"
         });
       }
     } catch (err) {
-      console.error("❌ Password verification failed:", err.message);
+      console.error("❌ Password verification failed:", err.message, { errorType: err.constructor.name });
       return res.status(500).json({
         status: false,
-        message: "Password verification failed"
+        message: "Password verification failed: " + err.message
       });
     }
 
@@ -63,7 +68,7 @@ route.post("/validateAdminLogin", async (req, res) => {
       data: { _id: admin._id, uid: admin.uid, email: admin.email, name: admin.name, purchaseCode: admin.purchaseCode }
     });
   } catch (error) {
-    console.error("❌ Login error:", error.message);
+    console.error("❌ Login error:", error.message, { stack: error.stack });
     return res.status(500).json({
       status: false,
       message: error.message || "Internal Server Error"
