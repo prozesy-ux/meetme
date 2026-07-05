@@ -33,8 +33,8 @@ const message = require("./message.route");
 const login = require("./login.route");
 
 //exports admin's route.js
-route.use("/", admin);  // Mount at root of this router (which is /api/admin)
-route.use("/test", testRoute);  // Test endpoint
+route.use(admin);  // Mount without prefix
+route.use(testRoute);  // Test endpoint
 route.use("/setting", validateAdminToken, setting);
 route.use("/impression", validateAdminToken, impression);
 route.use("/giftCategory", validateAdminToken, giftCategory);
