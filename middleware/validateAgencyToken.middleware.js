@@ -1,11 +1,6 @@
 const admin = require("firebase-admin");
 
-const privateKey = settingJSON?.privateKey;
-
-if (!privateKey) {
-  console.error("❌ Firebase private key not found in global setting.");
-  process.exit(1); // Exit process to prevent running without credentials
-}
+// Private key loaded lazily from env or settingJSON
 
 //import model
 const Agency = require("../models/agency.model");
