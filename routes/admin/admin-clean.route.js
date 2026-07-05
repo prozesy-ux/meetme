@@ -87,4 +87,35 @@ route.post("/validateAdminLogin", async (req, res) => {
   }
 });
 
+// ADMIN PASSWORD RESET ENDPOINT (for setup/troubleshooting)
+route.post("/resetAdminPassword", async (req, res) => {
+  try {
+    const { email, newPassword, secretKey } = req.body;
+    
+    if (secretKey !== (process.env.secretKey || "mysecretkey123")) {
+      return res.status(400).json({ status: false, message: "Invalid secret key" });
+    }
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ status: false, message: "Email and newPassword required" });
+    }
+
+    const encryptedPassword = cryptr.encrypt(newPassword);
+    const result = await Admin.updateOne(
+      { email: email.trim() },
+      { password: encryptedPassword }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ status: false, message: "Admin not found" });
+    }
+
+    console.log("✅ Admin password reset:", email);
+    res.json({ status: true, message: "Password reset successfully" });
+  } catch (error) {
+    console.error("❌ Password reset error:", error.message);
+    res.status(500).json({ status: false, message: error.message });
+  }
+});
+
 module.exports = route;
