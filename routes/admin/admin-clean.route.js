@@ -1,12 +1,17 @@
 const express = require("express");
 const route = express.Router();
 const checkAccessWithSecretKey = require("../../checkAccess");
-const adminLoginController = require("../../controllers/admin/admin-login-fixed");
 
 console.log("✅ admin-clean.route.js loaded");
 
-// LOGIN ENDPOINT - WORKING
-route.post("/validateAdminLogin", checkAccessWithSecretKey(), adminLoginController.validateAdminLogin);
+// Try to load login controller
+try {
+  const adminLoginController = require("../../controllers/admin/admin-login-fixed");
+  route.post("/validateAdminLogin", checkAccessWithSecretKey(), adminLoginController.validateAdminLogin);
+  console.log("✅ validateAdminLogin route registered");
+} catch (err) {
+  console.error("❌ Failed to load validateAdminLogin:", err.message);
+}
 
 // Try to load other endpoints
 try {
@@ -21,6 +26,7 @@ try {
   route.patch("/modifyAdminProfile", checkAccessWithSecretKey(), validateAdminToken, upload.single("image"), AdminController.modifyAdminProfile);
   route.patch("/modifyPassword", checkAccessWithSecretKey(), validateAdminToken, AdminController.updateAdminPassword);
   route.patch("/performPasswordReset", checkAccessWithSecretKey(), validateAdminToken, AdminController.performPasswordReset);
+  console.log("✅ Other admin routes registered");
 } catch (err) {
   console.log("⚠️ Optional admin routes failed:", err.message);
 }
