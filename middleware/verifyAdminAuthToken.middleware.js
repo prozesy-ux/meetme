@@ -24,7 +24,15 @@ const validateAdminFirebaseToken = async (req, res, next) => {
   const token = authHeader.split("Bearer ")[1];
 
   try {
-    const [decodedToken, mainAdmin] = await Promise.all([admin.auth().verifyIdToken(token), Admin.findOne({ uid: adminUid }).select("_id email password")]);
+    const [decodedToken, mainAdmin] = await Promise.all([admin.auth().verifyIdToken(token), Admin.findOne({ uid: adminUid }).select("_id email password uid")]);
+
+    console.log("🔍 [DEBUG] Decoded Token Email:", decodedToken?.email);
+    console.log("🔍 [DEBUG] Admin UID from Header:", adminUid);
+    console.log("🔍 [DEBUG] Admin Record Found:", mainAdmin ? "YES" : "NO");
+    if (mainAdmin) {
+      console.log("🔍 [DEBUG] Admin UID in DB:", mainAdmin.uid);
+      console.log("🔍 [DEBUG] Admin Email in DB:", mainAdmin.email);
+    }
 
     if (!decodedToken || !decodedToken.email) {
       console.warn("⚠️ [AUTH] Invalid token. Email not found.");
@@ -34,7 +42,12 @@ const validateAdminFirebaseToken = async (req, res, next) => {
     //console.log("✅ Decoded Token:", decodedToken);
 
     if (!mainAdmin) {
-      console.warn("⚠️ [AUTH] Admin not found.");
+      console.warn("⚠️ [AUTH] Admin not found with UID:", adminUid);
+      // Try to find admin by email
+      const adminByEmail = await Admin.findOne({ email: decodedToken.email }).select("_id email uid");
+      if (adminByEmail) {
+        console.log("🔍 [DEBUG] Admin found by email! UID in DB:", adminByEmail.uid, "vs UID from header:", adminUid);
+      }
       return res.status(401).json({ status: false, message: "Admin not found. Authorization failed." });
     }
 
