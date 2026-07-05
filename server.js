@@ -39,7 +39,7 @@ try {
 }
 
 // MongoDB Connection
-const mongoURI = process.env.MONGODB_URI;
+const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URL;
 if (mongoURI) {
   mongoose
     .connect(mongoURI, {
