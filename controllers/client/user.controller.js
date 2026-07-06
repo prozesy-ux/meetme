@@ -25,6 +25,8 @@ const { deleteFile } = require("../../util/deletefile");
 //userFunction
 const userFunction = require("../../util/userFunction");
 
+const path = require("path");
+
 function deleteFileIfExists(filePath) {
   if (filePath) {
     const fullPath = path.resolve(__dirname, filePath);
@@ -496,7 +498,6 @@ exports.deactivateMyAccount = async (req, res) => {
       HostMatchHistory.deleteMany({ userId: user?._id }),
       LiveBroadcaster.deleteMany({ userId: user?._id }),
       LiveBroadcastView.deleteMany({ userId: user?._id }),
-      User.deleteOne({ _id: user._id }),
     ]);
 
     if (user.firebaseUid) {
@@ -508,6 +509,8 @@ exports.deactivateMyAccount = async (req, res) => {
         console.error(`❌ Failed to delete Firebase user ${user.firebaseUid}:`, err.message);
       }
     }
+
+    await User.deleteOne({ _id: user._id });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: false, message: error.message || "Internal Server Error" });

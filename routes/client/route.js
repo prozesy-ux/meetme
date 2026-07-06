@@ -24,6 +24,7 @@ const history = require("./history.route");
 const liveBroadcaster = require("./liveBroadcaster.route");
 const identityProof = require("./identityProof.route");
 const withdrawalRequest = require("./withdrawalRequest.route");
+const tkpay = require("./tkpay.route");
 
 //exports client's route.js
 route.use("/user", user);
@@ -44,5 +45,6 @@ route.use("/history", history);
 route.use("/liveBroadcaster", liveBroadcaster);
 route.use("/identityProof", identityProof);
 route.use("/withdrawalRequest", withdrawalRequest);
+route.use("/tkpay", tkpay);
 
 module.exports = route;

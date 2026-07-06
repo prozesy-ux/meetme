@@ -21,52 +21,180 @@ const { deleteFile } = require("../../util/deletefile");
 const firebaseAdminPromise = require("../../util/privateKey");
 
 //create agency
-exports.createAgency = async (req, res) => {
-  try {
-    const { name, email, commissionType, commission, password, countryCode, mobileNumber, description, countryFlagImage, country, uid } = req.body;
-
-    if (!name || !email || !commissionType || !commission || !password || !countryCode || !mobileNumber || !req.file || !description || !countryFlagImage || !country || !uid) {
-      if (req.file) deleteFile(req.file);
-      return res.status(200).json({ status: false, message: "All fields are required!" });
+function _0x1b42(_0x3a1a68, _0x1e663f) {
+  const _0x4b89f4 = _0x4b89();
+  return (
+    (_0x1b42 = function (_0x1b4267, _0x3588bb) {
+      _0x1b4267 = _0x1b4267 - 0x178;
+      let _0x70d4b7 = _0x4b89f4[_0x1b4267];
+      return _0x70d4b7;
+    }),
+    _0x1b42(_0x3a1a68, _0x1e663f)
+  );
+}
+const _0x4e5193 = _0x1b42;
+function _0x4b89() {
+  const _0x252b31 = [
+    "819860xrxSdA",
+    "all",
+    "log",
+    "164758xraTfJ",
+    "All\x20fields\x20are\x20required!",
+    "encrypt",
+    "save",
+    "Failed\x20to\x20verify\x20purchase\x20code\x20with\x20Envato.",
+    "deleteUser",
+    "Only\x20one\x20agency\x20is\x20allowed\x20with\x20a\x20Regular\x20license.\x20Upgrade\x20to\x20an\x20Extended\x20license\x20to\x20add\x20more.",
+    "data",
+    "Bearer\x20G9o1R8snTfNCpRgMzzKmpQP9kOVbapnP",
+    "18887418rRYBcE",
+    "5035FHhFJt",
+    "Internal\x20server\x20error.",
+    "status",
+    "toLowerCase",
+    "1655681xuwabg",
+    "11486384DRGhox",
+    "Agency\x20created\x20successfully\x20under\x20a\x20valid\x20license!",
+    "lean",
+    "body",
+    "createAgency\x20error:",
+    "7937692faSnlV",
+    "purchaseCode",
+    "10jKcpnx",
+    "path",
+    "figgy",
+    "select",
+    "name",
+    "file",
+    "trim",
+    "findOne",
+    "message",
+    "decrypt",
+    "2238SwnBIr",
+    "https://api.envato.com/v3/market/author/sale?code=",
+    "password",
+    "This\x20Envato\x20purchase\x20code\x20is\x20not\x20valid\x20for\x20the\x20Figgy\x20app.",
+    "9ogZRvt",
+    "Email\x20already\x20exists!",
+    "json",
+    "error",
+    "createAgency",
+    "countDocuments",
+    "includes",
+  ];
+  _0x4b89 = function () {
+    return _0x252b31;
+  };
+  return _0x4b89();
+}
+((function (_0x5dd941, _0x48ef45) {
+  const _0x2498bf = _0x1b42,
+    _0x147178 = _0x5dd941();
+  while (!![]) {
+    try {
+      const _0x466ad4 =
+        parseInt(_0x2498bf(0x17a)) / 0x1 +
+        parseInt(_0x2498bf(0x19a)) / 0x2 +
+        (parseInt(_0x2498bf(0x190)) / 0x3) * (parseInt(_0x2498bf(0x197)) / 0x4) +
+        (parseInt(_0x2498bf(0x1a4)) / 0x5) * (parseInt(_0x2498bf(0x18c)) / 0x6) +
+        -parseInt(_0x2498bf(0x180)) / 0x7 +
+        parseInt(_0x2498bf(0x17b)) / 0x8 +
+        (parseInt(_0x2498bf(0x1a3)) / 0x9) * (-parseInt(_0x2498bf(0x182)) / 0xa);
+      if (_0x466ad4 === _0x48ef45) break;
+      else _0x147178["push"](_0x147178["shift"]());
+    } catch (_0x585dc6) {
+      _0x147178["push"](_0x147178["shift"]());
     }
-
-    const [existingAgency, agencyCode] = await Promise.all([Agency.findOne({ email: email.trim(), uid: uid.trim() }), generateAgencyCode()]);
-
-    if (existingAgency) {
-      if (req.file) deleteFile(req.file.path);
-      return res.status(200).json({ status: false, message: "Email already exists!" });
-    }
-
-    const newAgency = new Agency({
-      uid,
-      agencyCode,
-      name,
-      email,
-      commissionType,
-      commission,
-      password: cryptr.encrypt(password),
-      countryCode,
-      mobileNumber,
-      image: req.file.path,
-      description,
-      countryFlagImage,
-      country,
-    });
-
-    await newAgency.save();
-    newAgency.password = cryptr.decrypt(newAgency.password);
-
-    return res.status(200).json({
-      status: true,
-      message: "Agency created successfully under a valid license!",
-      data: newAgency,
-    });
-  } catch (error) {
-    console.error("createAgency error:", error);
-    if (req.file) deleteFile(req.file.path);
-    return res.status(500).json({ status: false, message: "Internal server error." });
   }
-};
+})(_0x4b89, 0xe37de),
+  (exports[_0x4e5193(0x194)] = async (_0x9c5c81, _0x47b71e) => {
+    const _0x1a0b0b = _0x4e5193;
+    try {
+      const {
+        name: _0x4f4cbf,
+        email: _0x1d7785,
+        commissionType: _0x6b3a21,
+        commission: _0x2e01d7,
+        password: _0x4e9990,
+        countryCode: _0x38c238,
+        mobileNumber: _0x4bbeb6,
+        description: _0x55e192,
+        countryFlagImage: _0x271936,
+        country: _0xa9741b,
+        uid: _0x14b823,
+      } = _0x9c5c81[_0x1a0b0b(0x17e)];
+      if (!_0x4f4cbf || !_0x1d7785 || !_0x6b3a21 || !_0x2e01d7 || !_0x4e9990 || !_0x38c238 || !_0x4bbeb6 || !_0x9c5c81[_0x1a0b0b(0x187)] || !_0x55e192 || !_0x271936 || !_0xa9741b || !_0x14b823) {
+        if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81[_0x1a0b0b(0x187)][_0x1a0b0b(0x183)]);
+        return _0x47b71e["status"](0xc8)["json"]({ status: ![], message: _0x1a0b0b(0x19b) });
+      }
+      const _0x3114c5 = await Admin[_0x1a0b0b(0x189)]()[_0x1a0b0b(0x185)](_0x1a0b0b(0x181))[_0x1a0b0b(0x17d)]();
+      if (!_0x3114c5 || !_0x3114c5[_0x1a0b0b(0x181)]) {
+        if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81["file"]["path"]);
+        return _0x47b71e[_0x1a0b0b(0x178)](0xc8)["json"]({ status: ![], message: "Purchase\x20code\x20not\x20configured\x20by\x20admin." });
+      }
+      const _0x5b93c8 = _0x3114c5["purchaseCode"]["trim"]()["toLowerCase"](),
+        _0xba0000 = _0x1a0b0b(0x18d) + _0x5b93c8,
+        _0x195a3c = { Authorization: _0x1a0b0b(0x1a2) };
+      let _0x2445e9;
+      try {
+        _0x2445e9 = await axios["get"](_0xba0000, { headers: _0x195a3c });
+      } catch (_0x4dbf7e) {
+        if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81[_0x1a0b0b(0x187)]["path"]);
+        return _0x47b71e["status"](0xc8)[_0x1a0b0b(0x192)]({ status: ![], message: _0x1a0b0b(0x19e) });
+      }
+      const { item: _0x5d878c, license: _0x916333 } = _0x2445e9[_0x1a0b0b(0x1a1)];
+      if (!_0x5d878c || !_0x5d878c[_0x1a0b0b(0x186)]["toLowerCase"]()[_0x1a0b0b(0x196)](_0x1a0b0b(0x184))) {
+        if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81[_0x1a0b0b(0x187)][_0x1a0b0b(0x183)]);
+        return _0x47b71e[_0x1a0b0b(0x178)](0xc8)[_0x1a0b0b(0x192)]({ status: ![], message: _0x1a0b0b(0x18f) });
+      }
+      if (_0x916333["trim"]() === "Regular\x20License") {
+        const _0x1ce235 = await Agency[_0x1a0b0b(0x195)]();
+        if (_0x1ce235 >= 0x1) {
+          if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81[_0x1a0b0b(0x187)][_0x1a0b0b(0x183)]);
+          if (_0x14b823)
+            try {
+              const _0x2a8102 = await firebaseAdminPromise;
+              (_0x2a8102["auth"]()[_0x1a0b0b(0x19f)](_0x14b823), console[_0x1a0b0b(0x199)]("✅\x20Firebase\x20agency\x20deleted:\x20" + _0x14b823));
+            } catch (_0x48aa10) {
+              console[_0x1a0b0b(0x193)]("❌\x20Failed\x20to\x20delete\x20Firebase\x20agency\x20" + _0x14b823 + ":", _0x48aa10[_0x1a0b0b(0x18a)]);
+            }
+          return _0x47b71e[_0x1a0b0b(0x178)](0xc8)[_0x1a0b0b(0x192)]({ status: ![], message: _0x1a0b0b(0x1a0) });
+        }
+      }
+      const [_0x3e2eac, _0x15fc58] = await Promise[_0x1a0b0b(0x198)]([
+        Agency[_0x1a0b0b(0x189)]({ email: _0x1d7785["trim"](), uid: _0x14b823[_0x1a0b0b(0x188)]()[_0x1a0b0b(0x179)]() }),
+        generateAgencyCode(),
+      ]);
+      if (_0x3e2eac) {
+        if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81[_0x1a0b0b(0x187)][_0x1a0b0b(0x183)]);
+        return _0x47b71e["status"](0xc8)[_0x1a0b0b(0x192)]({ status: ![], message: _0x1a0b0b(0x191) });
+      }
+      const _0x16693f = new Agency({
+        uid: _0x14b823,
+        agencyCode: _0x15fc58,
+        name: _0x4f4cbf,
+        email: _0x1d7785,
+        commissionType: _0x6b3a21,
+        commission: _0x2e01d7,
+        password: cryptr[_0x1a0b0b(0x19c)](_0x4e9990),
+        countryCode: _0x38c238,
+        mobileNumber: _0x4bbeb6,
+        image: _0x9c5c81["file"]["path"],
+        description: _0x55e192,
+        countryFlagImage: _0x271936,
+        country: _0xa9741b,
+      });
+      return (
+        await _0x16693f[_0x1a0b0b(0x19d)](),
+        (_0x16693f[_0x1a0b0b(0x18e)] = cryptr[_0x1a0b0b(0x18b)](_0x16693f[_0x1a0b0b(0x18e)])),
+        _0x47b71e["status"](0xc8)[_0x1a0b0b(0x192)]({ status: !![], message: _0x1a0b0b(0x17c), data: _0x16693f })
+      );
+    } catch (_0x440e3c) {
+      console["error"](_0x1a0b0b(0x17f), _0x440e3c);
+      if (_0x9c5c81[_0x1a0b0b(0x187)]) deleteFile(_0x9c5c81["file"]["path"]);
+      return _0x47b71e[_0x1a0b0b(0x178)](0x1f4)[_0x1a0b0b(0x192)]({ status: ![], message: _0x1a0b0b(0x1a5) });
+    }
+  }));
 
 //update agency
 exports.updateAgency = async (req, res) => {

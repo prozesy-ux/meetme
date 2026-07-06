@@ -3,9 +3,6 @@ const Setting = require("../../models/setting.model");
 //import model
 const Host = require("../../models/host.model");
 
-//scheduleChatJob
-const scheduleChatJob = require("../../worker/bullRandomChatJob");
-
 //update setting
 exports.updateSetting = async (req, res) => {
   try {
@@ -17,8 +14,6 @@ exports.updateSetting = async (req, res) => {
     if (!setting) {
       return res.status(200).json({ status: false, message: "Setting not found." });
     }
-
-    let shouldRescheduleChatJob = false;
 
     // ====== PAYSTACK ======
     setting.paystackPublicKey = req.body.paystackPublicKey?.trim() ?? setting.paystackPublicKey;
@@ -48,6 +43,14 @@ exports.updateSetting = async (req, res) => {
     setting.minCoinsForAgencyPayout = req.body.minCoinsForAgencyPayout ? Number(req.body.minCoinsForAgencyPayout) : setting.minCoinsForAgencyPayout;
     setting.maxFreeChatMessages = req.body.maxFreeChatMessages ? Number(req.body.maxFreeChatMessages) : setting.maxFreeChatMessages;
 
+    // ===== TKPAY (bKash / Nagad / Rocket) =====
+    if ("tkpayEnabled" in req.body) setting.tkpayEnabled = Boolean(req.body.tkpayEnabled);
+    if ("tkpayMerchantId" in req.body) setting.tkpayMerchantId = req.body.tkpayMerchantId?.trim() ?? setting.tkpayMerchantId;
+    if ("tkpayHashKey" in req.body) setting.tkpayHashKey = req.body.tkpayHashKey?.trim() ?? setting.tkpayHashKey;
+    if ("tkpayApiUrl" in req.body) setting.tkpayApiUrl = req.body.tkpayApiUrl?.trim() ?? setting.tkpayApiUrl;
+    if ("tkpayCallbackBaseUrl" in req.body) setting.tkpayCallbackBaseUrl = req.body.tkpayCallbackBaseUrl?.trim() ?? setting.tkpayCallbackBaseUrl;
+    if ("tkpayIsTest" in req.body) setting.tkpayIsTest = Boolean(req.body.tkpayIsTest);
+
     if ("androidAppVersion" in req.body) {
       setting.androidAppVersion = req.body.androidAppVersion.trim();
     }
@@ -59,18 +62,6 @@ exports.updateSetting = async (req, res) => {
     }
     if ("iosAppLink" in req.body) {
       setting.iosAppLink = req.body.iosAppLink.trim();
-    }
-
-    if (req.body.messageInitiatedAt !== undefined) {
-      const newVal = Number(req.body.messageInitiatedAt);
-      if (newVal !== setting.messageInitiatedAt) {
-        shouldRescheduleChatJob = true;
-        setting.messageInitiatedAt = newVal;
-      }
-    }
-
-    if (req.body.callInitiatedAt !== undefined) {
-      setting.callInitiatedAt = Number(req.body.callInitiatedAt);
     }
 
     if (req.body.privateKey) {
@@ -107,10 +98,7 @@ exports.updateSetting = async (req, res) => {
     // );
 
     global.settingJSON = setting;
-    if (shouldRescheduleChatJob) {
-      console.log("🔁 Rescheduling chat job...", global?.settingJSON?.messageInitiatedAt);
-      await scheduleChatJob();
-    }
+    
     updateSettingFile(setting);
 
     if (req.body.privateKey) {
@@ -178,10 +166,21 @@ exports.updateSettingToggle = async (req, res) => {
       setting.razorpayIosEnabled = !setting.razorpayIosEnabled;
     } else if (type === "flutterwaveIosEnabled") {
       setting.flutterwaveIosEnabled = !setting.flutterwaveIosEnabled;
-    } else if (type === "isAutoMessageEnabled") {
-      setting.isAutoMessageEnabled = !setting.isAutoMessageEnabled;
-    } else if (type === "isAutoCallEnabled") {
-      setting.isAutoCallEnabled = !setting.isAutoCallEnabled;
+    } else if (type === "tkpayEnabled") {
+      setting.tkpayEnabled = !setting.tkpayEnabled;
+    } else if (type === "tkpayIsTest") {
+      setting.tkpayIsTest = !setting.tkpayIsTest;
+    } else if (type === "tkpayAndroidEnabled") {
+      setting.tkpayAndroidEnabled = !setting.tkpayAndroidEnabled;
+    } else if (type === "tkpayIosEnabled") {
+      setting.tkpayIosEnabled = !setting.tkpayIosEnabled;
+    } else {
+      return res.status(200).json({ status: false, message: "type passed must be valid." });
+    }
+    } else if (type === "tkpayAndroidEnabled") {
+      setting.tkpayAndroidEnabled = !setting.tkpayAndroidEnabled;
+    } else if (type === "tkpayIosEnabled") {
+      setting.tkpayIosEnabled = !setting.tkpayIosEnabled;
     } else {
       return res.status(200).json({ status: false, message: "type passed must be valid." });
     }

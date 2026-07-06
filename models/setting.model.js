@@ -70,16 +70,19 @@ const settingSchema = new mongoose.Schema(
     maxFreeChatMessages: { type: Number, default: 0 }, //maximum free messages allowed
     chatInteractionRate: { type: Number, default: 0 },
 
-    isAutoMessageEnabled: { type: Boolean, default: false },
-    messageInitiatedAt: { type: Number, default: 0 }, //in min
-    isAutoCallEnabled: { type: Boolean, default: false },
-    callInitiatedAt: { type: Number, default: 0 }, //in min
-
     adminCommissionRate: { type: Number, default: 0 }, //in %
     minCoinsToConvert: { type: Number, default: 0 }, //min coin requried for convert coin to default currency i.e., 1000 coin = 1 $
 
     minCoinsForHostPayout: { type: Number, default: 0 }, //for host
     minCoinsForAgencyPayout: { type: Number, default: 0 }, //for agency
+
+    // ===== TKPAY (bKash / Nagad / Rocket — Bangladesh) =====
+    tkpayEnabled: { type: Boolean, default: false },
+    tkpayMerchantId: { type: String, default: "" }, // ShopUserLongId
+    tkpayHashKey: { type: String, default: "" },     // SHA256 signing key
+    tkpayApiUrl: { type: String, default: "https://tkm.worldxxpp.com" },
+    tkpayCallbackBaseUrl: { type: String, default: "" }, // e.g. https://admin.yourdomain.com/
+    tkpayIsTest: { type: Boolean, default: false },
   },
   {
     timestamps: true,
